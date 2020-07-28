@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">HelloDroidJ</string>
+    <string name="app_name">helloDroid</string>
+    <string name="image_description">this is a fox smelling a flower</string>
+    <string name="news_title">fox\'s love flowers, this is a true story</string>
+    <string name="news_subtitle">this is absolutely made up</string>
+    <string name="news_text">I have a memory that I cannot clearly place. It was six or seven years ago and I was watching a segment on breakfast television about how many urban children cannot recognise well-known British wildlife by sight or sound. I was one of those children. My summer holidays were spent at home, bored, under east London’s concrete canopy. Wildlife highlights were foxes and the odd rat, creatures to be feared because nature was unpredictable, and sometimes even perverse (viz, the common city pigeon, cannibalistically picking at discarded fried chicken bones).</string>
+    <string name="news_publisher">fake news agency represents</string>
+    <string name="news_time">just few seconds ago</string>
+    <string name="news_devider">this is devider</string>
 </resources>
