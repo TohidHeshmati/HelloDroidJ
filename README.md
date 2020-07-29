@@ -1,2 +1,3 @@
 #android  
-![xml-layout](https://github.com/TohidHeshmati/android/blob/master/latestIMG/xml-layout-final.png)
+  
+![xml-layout](https://github.com/TohidHeshmati/HelloDroidJ/blob/master/latestIMG/xml-layout-final.png)
