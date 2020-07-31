@@ -1,7 +1,11 @@
 package com.example.hellodroidj;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +22,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView newsRecyclerView;
+    public ProgressDialog progressDialog;
 
     List<NewsItem> newsItems = Arrays.asList(new NewsItem(1, "title", "subtitle", "text", R.drawable.chill, "description", "time", "publisher"),
             new NewsItem(2, "titlehgjhg", "subtitle", "text", R.drawable.marsian, "description", "time", "publisher"),
@@ -36,24 +41,27 @@ public class MainActivity extends AppCompatActivity {
 
         newsRecyclerView = findViewById(R.id.newsRecycleView);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        newsRecyclerView.setLayoutManager(linearLayoutManager);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        newsRecyclerView.setLayoutManager(linearLayoutManager);
+//
+////        NewsAdapter newsAdapter = new NewsAdapter(newsItems);
+//        newsRecyclerView.setAdapter(new NewsAdapter(newsItems, new NewsAdapter.OnNewsItemClickListener() {
+//            @Override
+//            public void onItemClicked(int position) {
+//                Intent intent = new Intent(getApplicationContext(), NewsDetailActivity.class);
+//                //Intent intent = new Intent(MainActivity.this, NewsDetailActivity.class);
+//                intent.putExtra("imageId", newsItems.get(position).getImageId());
+//                intent.putExtra("imageDesc", newsItems.get(position).getImageDescription());
+//                intent.putExtra("title", newsItems.get(position).getTitle());
+//                intent.putExtra("subTitle", newsItems.get(position).getSubTitle());
+//                intent.putExtra("time", newsItems.get(position).getTime());
+//                intent.putExtra("text", newsItems.get(position).getText());
+//                intent.putExtra("publisher", newsItems.get(position).getPublisher());
+//            }
+//        }));
 
-//        NewsAdapter newsAdapter = new NewsAdapter(newsItems);
-        newsRecyclerView.setAdapter(new NewsAdapter(newsItems, new NewsAdapter.OnNewsItemClickListener() {
-            @Override
-            public void onItemClicked(int position) {
-                Intent intent = new Intent(getApplicationContext(), NewsDetailActivity.class);
-                //Intent intent = new Intent(MainActivity.this, NewsDetailActivity.class);
-                intent.putExtra("imageId", newsItems.get(position).getImageId());
-                intent.putExtra("imageDesc", newsItems.get(position).getImageDescription());
-                intent.putExtra("title", newsItems.get(position).getTitle());
-                intent.putExtra("subTitle", newsItems.get(position).getSubTitle());
-                intent.putExtra("time", newsItems.get(position).getTime());
-                intent.putExtra("text", newsItems.get(position).getText());
-                intent.putExtra("publisher", newsItems.get(position).getPublisher());
-            }
-        }));
+        HttpGetRequest httpGetRequest = new HttpGetRequest();
+        httpGetRequest.execute("http://www.example.com");
     }
 
     public String getRequest(String stringUrl) {
@@ -123,6 +131,59 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
             return e.toString();
+        }
+    }
+
+    private class HttpGetRequest extends AsyncTask<String, Integer, String> {
+        // 4 state of an async, before, while, after, background
+
+        // on main thread, such as progress bar
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setVolumeControlStream(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String stringUrl = strings[0];
+            try {
+                URL url = new URL(stringUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("GET");
+                connection.setReadTimeout(30000);
+                connection.setConnectTimeout(30000);
+                connection.connect();
+
+                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(streamReader);
+
+                StringBuilder stringBuilder = new StringBuilder();
+                String inputLine = "";
+
+                while ((inputLine = reader.readLine()) != null) {
+                    stringBuilder.append(inputLine);
+                }
+
+                reader.close();
+                streamReader.close();
+
+                return stringBuilder.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            }
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            //super.onPostExecute(result);
+            progressDialog.hide();
+            Log.e("result", result);
         }
     }
 }
