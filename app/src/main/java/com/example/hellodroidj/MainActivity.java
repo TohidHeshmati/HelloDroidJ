@@ -7,6 +7,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,4 +56,73 @@ public class MainActivity extends AppCompatActivity {
         }));
     }
 
+    public String getRequest(String stringUrl) {
+        try {
+            URL url = new URL(stringUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setReadTimeout(30000);
+            connection.setConnectTimeout(30000);
+            connection.connect();
+
+            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+            BufferedReader reader = new BufferedReader(streamReader);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String inputLine = "";
+
+            while ((inputLine = reader.readLine()) != null) {
+                stringBuilder.append(inputLine);
+            }
+
+            reader.close();
+            streamReader.close();
+
+            return stringBuilder.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
+
+    public String postRequest(String stringUrl, String parameters) {
+        byte[] postData = parameters.getBytes(Charset.forName("UTF-8"));
+
+        try {
+            URL url = new URL(stringUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("POST");
+            connection.setReadTimeout(30000);
+            connection.setConnectTimeout(30000);
+
+            //this is needed to set body for output
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Length", String.valueOf(postData.length));
+            connection.setUseCaches(false);
+            connection.getOutputStream().write(postData);
+
+            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+            BufferedReader reader = new BufferedReader(streamReader);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String inputLine = "";
+
+            while ((inputLine = reader.readLine()) != null) {
+                stringBuilder.append(inputLine);
+            }
+
+            reader.close();
+            streamReader.close();
+
+            return stringBuilder.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
 }
