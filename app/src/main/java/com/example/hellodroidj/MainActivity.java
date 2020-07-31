@@ -1,5 +1,6 @@
 package com.example.hellodroidj;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +34,20 @@ public class MainActivity extends AppCompatActivity {
         newsRecyclerView.setLayoutManager(linearLayoutManager);
 
 //        NewsAdapter newsAdapter = new NewsAdapter(newsItems);
-        newsRecyclerView.setAdapter(new NewsAdapter(newsItems));
+        newsRecyclerView.setAdapter(new NewsAdapter(newsItems, new NewsAdapter.OnNewsItemClickListener() {
+            @Override
+            public void onItemClicked(int position) {
+                Intent intent = new Intent(getApplicationContext(), NewsDetailActivity.class);
+                //Intent intent = new Intent(MainActivity.this, NewsDetailActivity.class);
+                intent.putExtra("imageId", newsItems.get(position).getImageId());
+                intent.putExtra("imageDesc", newsItems.get(position).getImageDescription());
+                intent.putExtra("title", newsItems.get(position).getTitle());
+                intent.putExtra("subTitle", newsItems.get(position).getSubTitle());
+                intent.putExtra("time", newsItems.get(position).getTime());
+                intent.putExtra("text", newsItems.get(position).getText());
+                intent.putExtra("publisher", newsItems.get(position).getPublisher());
+            }
+        }));
     }
 
 }

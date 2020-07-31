@@ -10,9 +10,11 @@ import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<NewsItem> mainItems;
+    private OnNewsItemClickListener listener;
 
-    public NewsAdapter(List<NewsItem> mainItems) {
+    public NewsAdapter(List<NewsItem> mainItems, OnNewsItemClickListener listener) {
         this.mainItems = mainItems;
+        this.listener = listener;
     }
 
     @NonNull
@@ -23,7 +25,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         NewsViewHolder viewHolder = (NewsViewHolder) holder;
         NewsItem item = mainItems.get(position);
         viewHolder.imageView.setImageResource(item.getImageId());
@@ -31,10 +33,21 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.time.setText(item.getTime());
         viewHolder.title.setText(item.getTitle());
 
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onItemClicked(position);
+            }
+        });
+
     }
 
     @Override
     public int getItemCount() {
         return mainItems.size();
+    }
+
+    public interface OnNewsItemClickListener {
+        public void onItemClicked(int position);
     }
 }
